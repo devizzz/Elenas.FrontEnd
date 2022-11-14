@@ -13,7 +13,7 @@ interface IProps {
   tasks?: list<taskType>;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setTaskToEdit: React.Dispatch<React.SetStateAction<taskType | undefined>>;
-  removeTask: (pk: string) => void;
+  removeTask: (pk: number) => void;
 }
 
 const TaskList = (props: IProps) => {
@@ -23,7 +23,7 @@ const TaskList = (props: IProps) => {
     { field: "title", headerName: "Titulo", flex: 2 },
     { field: "description", headerName: "Descripción", flex: 3 },
     { field: "createDate", headerName: "Fecha de creación", flex: 2 },
-    { field: "updateDate", headerName: "Fecha de actualización", flex: 2 },
+    { field: "state", headerName: "Estado", flex: 1 },
     {
       field: "actions",
       type: "actions",
@@ -51,9 +51,9 @@ const TaskList = (props: IProps) => {
     <DataGrid
       rows={tasks?.results ?? []}
       columns={columns}
-      getRowId={(row) => row.pk}
-      pageSize={5}
-      rowsPerPageOptions={[5]}
+      getRowId={(row) => row.pk ?? ''}
+      pageSize={20}
+      rowsPerPageOptions={[20]}
       checkboxSelection
       autoHeight
     />
