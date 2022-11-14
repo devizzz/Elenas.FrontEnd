@@ -1,4 +1,4 @@
 export default {
   login: "/",
-  task: "/task",
+  task: "/tasks",
 };
