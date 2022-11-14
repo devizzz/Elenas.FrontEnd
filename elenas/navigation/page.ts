@@ -1,4 +1,4 @@
 export default {
-  home: "/",
-  companies: "/companies",
+  login: "/",
+  task: "/task",
 };
