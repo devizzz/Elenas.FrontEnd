@@ -77,7 +77,7 @@ const Tasks = () => {
           alert(data.detail);
         }
       } else {
-        alert("Ha ocurrido un error interno");
+        alert("Ha ocurrido un error interno.");
       }
     }
   };

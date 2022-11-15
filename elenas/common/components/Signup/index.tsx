@@ -47,7 +47,7 @@ const Signup = () => {
     <div>
       <Box m={1} display="flex" justifyContent="center" alignItems="center">
         <Typography variant="h3" style={{ color: "#5B5B5B" }}>
-          Registrarse
+          Registrate
         </Typography>
       </Box>
       <div style={{width: "50%", margin: "auto"}}>
