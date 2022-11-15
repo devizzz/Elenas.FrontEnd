@@ -4,7 +4,11 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import { Logout as LogoutIcon, Menu as MenuIcon } from "@mui/icons-material";
+import {
+  Logout as LogoutIcon,
+  Menu as MenuIcon,
+  Login as LoginIcon,
+} from "@mui/icons-material";
 import Menu from "@mui/material/Menu";
 import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import page from "@navigation/page";
@@ -16,6 +20,7 @@ import { UserInfo } from "../../apis/types/user/UserInfo";
 type NavItem = {
   label: string;
   path: string;
+  login: boolean;
   event?: (action?: () => void) => void;
   icon?: any;
 };
@@ -25,11 +30,18 @@ const navItems: NavItem[] = [
     label: "Cerrar sesión",
     path: page.login,
     icon: <LogoutIcon />,
+    login: true,
     event: (action?: () => void) => {
       if (action) {
         action();
       }
     },
+  },
+  {
+    label: "Registrarse",
+    path: page.signup,
+    icon: <LoginIcon />,
+    login: false,
   },
 ];
 
@@ -40,11 +52,16 @@ function callPath(path: string, router: NextRouter) {
 interface IProps {
   anchorEl: HTMLElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
-  clearUserInfo:() => void;
 }
 
 function DropDownLoggedIn(props: IProps) {
-  const { anchorEl, setAnchorEl, clearUserInfo } = props;
+  const { anchorEl, setAnchorEl } = props;
+  const { getUserInfo, clearUserInfo } = useUserInfoStoreStore();
+  const [user, setUser] = React.useState<UserInfo>();
+
+  React.useEffect(() => {
+    setUser(getUserInfo());
+  }, [getUserInfo]);
 
   const router = useRouter();
   const open = Boolean(anchorEl);
@@ -67,12 +84,15 @@ function DropDownLoggedIn(props: IProps) {
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <List>
-        {navItems.map((item: NavItem, index) => (
+        {navItems.filter(x => (x.login && user?.user) || (!x.login && !user?.user)).map((item: NavItem, index) => (
           <ListItem
             button
             onClick={() => {
               if (item.event) {
                 item.event(logOut);
+              }
+              else {
+                callPath(item.path, router);
               }
             }}
           >
@@ -87,12 +107,6 @@ function DropDownLoggedIn(props: IProps) {
 
 export default function ButtonAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { getUserInfo, clearUserInfo } = useUserInfoStoreStore();
-  const [user, setUser] = React.useState<UserInfo>();
-
-  React.useEffect(() => {
-    setUser(getUserInfo());
-  }, [getUserInfo]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -105,20 +119,22 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Elenas
           </Typography>
-          {user?.user && (
-            <IconButton
-              size="large"
-              edge="end"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-              onClick={handleClick}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
+
+          <IconButton
+            size="large"
+            edge="end"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={handleClick}
+          >
+            <MenuIcon />
+          </IconButton>
         </Toolbar>
-        <DropDownLoggedIn anchorEl={anchorEl} setAnchorEl={setAnchorEl} clearUserInfo={clearUserInfo} />
+        <DropDownLoggedIn
+          anchorEl={anchorEl}
+          setAnchorEl={setAnchorEl}
+        />
       </AppBar>
     </Box>
   );
